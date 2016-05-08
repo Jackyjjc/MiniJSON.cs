@@ -465,7 +465,8 @@ namespace MiniJSON {
 
                 bool first = true;
 
-                foreach (object obj in anArray) {
+                for (int i=0; i<anArray.Count; i++) {
+                    object obj = anArray[i];
                     if (!first) {
                         builder.Append(',');
                     }
@@ -482,7 +483,8 @@ namespace MiniJSON {
                 builder.Append('\"');
 
                 char[] charArray = str.ToCharArray();
-                foreach (var c in charArray) {
+                for (int i=0; i<charArray.Length; i++) {
+                    char c = charArray[i];
                     switch (c) {
                     case '"':
                         builder.Append("\\\"");
