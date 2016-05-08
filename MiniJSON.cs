@@ -292,12 +292,12 @@ namespace MiniJSON {
 
                 if (number.IndexOf('.') == -1) {
                     long parsedInt;
-                    Int64.TryParse(number, out parsedInt);
+                    Int64.TryParse(number, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedInt);
                     return parsedInt;
                 }
 
                 double parsedDouble;
-                Double.TryParse(number, out parsedDouble);
+                Double.TryParse(number, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedDouble);
                 return parsedDouble;
             }
 
@@ -525,7 +525,7 @@ namespace MiniJSON {
                 // They always have, I'm just letting you know.
                 // Previously floats and doubles lost precision too.
                 if (value is float) {
-                    builder.Append(((float) value).ToString("R"));
+                    builder.Append(((float) value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
                 } else if (value is int
                     || value is uint
                     || value is long
@@ -537,7 +537,7 @@ namespace MiniJSON {
                     builder.Append(value);
                 } else if (value is double
                     || value is decimal) {
-                    builder.Append(Convert.ToDouble(value).ToString("R"));
+                    builder.Append(Convert.ToDouble(value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
                 } else {
                     SerializeString(value.ToString());
                 }
