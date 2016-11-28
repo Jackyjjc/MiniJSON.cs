@@ -95,6 +95,12 @@ namespace MiniJSON {
                 return Char.IsWhiteSpace(c) || WORD_BREAK.IndexOf(c) != -1;
             }
 
+            const string HEX_DIGIT = "0123456789ABCDEFabcdef";
+
+            public static bool IsHexDigit(char c) {
+                return HEX_DIGIT.IndexOf(c) != -1;
+            }
+
             enum TOKEN {
                 NONE,
                 CURLY_OPEN,
@@ -142,7 +148,7 @@ namespace MiniJSON {
                         continue;
                     case TOKEN.CURLY_CLOSE:
                         return table;
-                    default:
+                    case TOKEN.STRING:
                         // name
                         string name = ParseString();
                         if (name == null) {
@@ -157,8 +163,14 @@ namespace MiniJSON {
                         json.Read();
 
                         // value
-                        table[name] = ParseValue();
+                        TOKEN valueToken = NextToken;
+                        object value = ParseByToken(valueToken);
+                        if(value==null && valueToken!=TOKEN.NULL)
+                            return null;
+                        table[name] = value;
                         break;
+                    default:
+                        return null;
                     }
                 }
             }
@@ -184,7 +196,8 @@ namespace MiniJSON {
                         break;
                     default:
                         object value = ParseByToken(nextToken);
-
+                        if(value==null && nextToken!=TOKEN.NULL)
+                            return null;
                         array.Add(value);
                         break;
                     }
@@ -272,6 +285,8 @@ namespace MiniJSON {
 
                             for (int i=0; i< 4; i++) {
                                 hex[i] = NextChar;
+                                if (!IsHexDigit(hex[i]))
+                                    return null;
                             }
 
                             s.Append((char) Convert.ToInt32(new string(hex), 16));
